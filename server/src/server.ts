@@ -19,7 +19,7 @@ app.use(express.json());
  * Request Body: Parâmetros para criação/atualização de informações; 
  */
 
-const users = [
+const lovers = [
     'Amanda',
     '&',
     'Ramon'
@@ -28,14 +28,14 @@ const users = [
 app.get('/users', (request, response) => {
     const search = String(request.query.search);
 
-    const filteredUsers = search ? users.filter(user => user.includes(search)) : users;
+    const filteredUsers = search ? lovers.filter(user => user.includes(search)) : lovers;
 
     response.json(filteredUsers);
 });
 
 app.get('/users/:id', (request, response) => {
     const id = Number(request.params.id);
-    const user = users[id];
+    const user = lovers[id];
 
     return response.json(user);
 });
