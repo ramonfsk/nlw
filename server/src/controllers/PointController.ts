@@ -60,7 +60,7 @@ class PointController {
             longitude,
             city,
             uf,
-            image: 'image-fake'
+            image: 'https://media-cdn.tripadvisor.com/media/photo-s/15/d3/c2/93/popular-market.jpg'
         }
         const insertedIds = await trx('point').insert(point);
 
