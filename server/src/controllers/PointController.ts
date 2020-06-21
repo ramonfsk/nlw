@@ -18,7 +18,15 @@ class PointController {
             .distinct()
             .select('point.*');
 
-        return response.json(points);
+
+        const serializedPoints = points.map(point => {
+            return {
+                ...point,
+                image_url: `http://192.168.0.161:3333/uploads/${point.image}`
+            };
+        });
+
+        return response.json(serializedPoints);
     }
 
     async show(request: Request, response: Response) {
@@ -30,12 +38,17 @@ class PointController {
             return response.status(400).json({ message: 'Point not found' });
         }
 
+        const serializedPoint = {
+            ...point,
+            image_url: `http://192.168.0.161:3333/uploads/${point.image}`
+        };
+
         const items = await knex('item')
             .join('point_item', 'item.id', '=', 'point_item.item_id')
             .where('point_item.point_id', id)
             .select('item.title');
 
-        return response.json({ point, items });
+        return response.json({ serializedPoint, items });
     }
 
     async create(request: Request, response: Response) {
@@ -60,12 +73,15 @@ class PointController {
             longitude,
             city,
             uf,
-            image: 'https://media-cdn.tripadvisor.com/media/photo-s/15/d3/c2/93/popular-market.jpg'
+            image: request.file.filename
         }
         const insertedIds = await trx('point').insert(point);
 
         const point_id = insertedIds[0];
-        const pointItems = items.map((item_id: number) => {
+        const pointItems = items
+            .split(',')
+            .map((item: string) => Number(item.trim()))
+            .map((item_id: number) => {
             return {
                 item_id,
                 point_id
